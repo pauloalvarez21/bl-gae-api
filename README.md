@@ -76,6 +76,10 @@ npm run start:prod
 
 It listens on port `3000` by default, or on the one set by the `PORT` environment variable.
 
+**ES** — CORS está habilitado por defecto para cualquier origen (útil para Flutter web en desarrollo). Para restringirlo en producción, define la variable de entorno `CORS_ORIGIN` con la lista de orígenes separados por coma (ej: `https://miapp.com,https://admin.miapp.com`).
+
+**EN** — CORS is enabled by default for any origin (useful for Flutter web in development). To restrict it in production, set the `CORS_ORIGIN` environment variable with a comma-separated list of origins (e.g. `https://myapp.com,https://admin.myapp.com`).
+
 ## Endpoints
 
 Base URL / URL base: `http://localhost:3000`
