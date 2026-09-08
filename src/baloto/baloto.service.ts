@@ -20,8 +20,11 @@ export class BalotoService {
       // Ajusta esta ruta según donde tengas instalado Chrome en tu Windows
       browser = await chromium.launch({ 
         headless: true,
-        executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Importante para evitar errores
+        args: [
+    '--no-sandbox', 
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage'
+  ]
       });
       
       const page = await browser.newPage();
