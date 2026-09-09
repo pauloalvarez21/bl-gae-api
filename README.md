@@ -9,7 +9,7 @@
 **ES**
 
 - 📊 **Último resultado**: consulta el sorteo más reciente de Baloto y Revancha.
-- 📜 **Histórico paginado**: navega por hasta 125 páginas de resultados históricos.
+- 📜 **Histórico paginado**: navega por resultados históricos con paginación real (parámetros `page` y `limit`).
 - ✅ **Verificación de jugadas**: compara tus números contra el último sorteo y determina la categoría de premio.
 - ⚡ **Caché en memoria** (24 h para el histórico, 1 h global) para reducir el scraping.
 - 🕐 **Tareas programadas**: actualización automática los días de sorteo (miércoles, viernes y sábado) y verificación horaria del caché.
@@ -17,7 +17,7 @@
 **EN**
 
 - 📊 **Latest result**: fetch the most recent Baloto and Revancha draw.
-- 📜 **Paginated history**: browse up to 125 pages of historical results.
+- 📜 **Paginated history**: browse historical results with real pagination (`page` and `limit` parameters).
 - ✅ **Number verification**: compare your numbers against the latest draw and determine the prize category.
 - ⚡ **In-memory cache** (24 h for history, 1 h global) to reduce scraping.
 - 🕐 **Scheduled tasks**: automatic updates on draw days (Wednesday, Friday and Saturday) and hourly cache checks.
@@ -27,20 +27,14 @@
 **ES**
 
 - Node.js 20+ y npm
-- Un navegador instalado en Windows en alguna de estas rutas (según qué endpoint uses):
-  - **Edge** (para `/baloto/ultimo` y la verificación): `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`
-  - **Chrome** (para `/baloto/historico`): `C:\Program Files\Google\Chrome\Application\chrome.exe`
 
-> ⚠️ Las rutas del navegador están **hardcodeadas** en `src/baloto/baloto.service.ts`. Si tu instalación está en otra ubicación, ajústalas ahí (la ruta de Edge se usa en `obtenerUltimosResultados()` y la de Chrome en `obtenerHistorico()`).
+> 💡 El scraping se realiza con axios + cheerio (sin navegador). / Scraping is done with axios + cheerio (no browser required).
 
 **EN**
 
 - Node.js 20+ and npm
-- A browser installed on Windows at one of these paths (depending on which endpoint you use):
-  - **Edge** (for `/baloto/ultimo` and verification): `C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`
-  - **Chrome** (for `/baloto/historico`): `C:\Program Files\Google\Chrome\Application\chrome.exe`
 
-> ⚠️ The browser paths are **hardcoded** in `src/baloto/baloto.service.ts`. If your installation is elsewhere, adjust them there (the Edge path is used in `obtenerUltimosResultados()` and the Chrome one in `obtenerHistorico()`).
+> 💡 Scraping is done with axios + cheerio (no browser required).
 
 ## Instalación y ejecución · Installation & running
 
@@ -132,13 +126,13 @@ Si no hay resultados, el campo correspondiente llega como `null`. / If there are
   ],
   "paginacion": {
     "paginaActual": 1,
-    "totalPaginas": 125,
+    "totalPaginas": 25,
     "resultadosPorPagina": 10
   }
 }
 ```
 
-> 💡 Cada página se cachea durante 24 horas, ya que el histórico no cambia. / Each page is cached for 24 hours since the history does not change.
+> 💡 Los datos se cachean durante 24 horas. La paginación aplica sobre todos los resultados disponibles del scraping. / Data is cached for 24 hours. Pagination applies over all available scraped results.
 
 ### `GET /baloto/verificar`
 

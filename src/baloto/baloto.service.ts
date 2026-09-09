@@ -62,8 +62,8 @@ export class BalotoService {
       });
 
       const datosFinales = {
-        baloto: balotoResultados.slice(0, 10),
-        revancha: revanchaResultados.slice(0, 10),
+        baloto: balotoResultados,
+        revancha: revanchaResultados,
       };
 
       await this.cacheManager.set(this.CACHE_KEY, datosFinales, 3600);
@@ -119,10 +119,20 @@ export class BalotoService {
 
   async obtenerHistorico(page: number = 1, limit: number = 10) {
     const resultados = await this.obtenerUltimosResultados();
+
+    const startIndex = (page - 1) * limit;
+    const balotoPaginado = resultados.baloto.slice(startIndex, startIndex + limit);
+    const revanchaPaginada = resultados.revancha.slice(startIndex, startIndex + limit);
+
+    const totalBaloto = resultados.baloto.length;
+    const totalRevancha = resultados.revancha.length;
+    const totalItems = Math.max(totalBaloto, totalRevancha);
+    const totalPaginas = Math.ceil(totalItems / limit);
+
     return {
-      baloto: resultados.baloto,
-      revancha: resultados.revancha,
-      paginacion: { paginaActual: page, totalPaginas: 1, resultadosPorPagina: limit }
+      baloto: balotoPaginado,
+      revancha: revanchaPaginada,
+      paginacion: { paginaActual: page, totalPaginas, resultadosPorPagina: limit }
     };
   }
 }
