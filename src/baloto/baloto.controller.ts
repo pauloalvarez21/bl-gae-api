@@ -3,6 +3,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { BalotoService } from './baloto.service';
 import { CreateVerificarDto } from './verificar/dto/create-verificar.dto';
+import { CreateVerificarPorFechaDto } from './verificar/dto/create-verificar-por-fecha.dto';
 import { CreateHistoricoDto } from './historico/dto/create-historico.dto';
 import { UltimoResultadoResponseDto, HistoricoResponseDto, VerificarResponseDto } from './interfaces/response.dto';
 
@@ -39,5 +40,20 @@ export class BalotoController {
   @ApiOkResponse({ description: 'Resultado de la verificación contra Baloto y Revancha', type: VerificarResponseDto })
   async verificarNumeros(@Query() query: CreateVerificarDto) {
     return this.balotoService.verificarNumeros(query.numeros, query.superbalota);
+  }
+
+  @Get('verificar-por-fecha')
+  @ApiOperation({ summary: 'Verificar jugada por fecha', description: 'Verifica una jugada contra el sorteo de una fecha específica' })
+  @ApiQuery({ name: 'fecha', required: true, description: 'Fecha del sorteo (formato YYYY-MM-DD)', example: '2026-09-05' })
+  @ApiQuery({
+    name: 'numeros',
+    required: true,
+    description: 'Números de la jugada: separados por comas (11,12,17,5,6) o parámetro repetido 5 veces',
+    example: '11,12,17,5,6',
+  })
+  @ApiQuery({ name: 'superbalota', required: true, description: 'Número superbalota (1-16)', example: 15 })
+  @ApiOkResponse({ description: 'Resultado de la verificación contra el sorteo de la fecha indicada', type: VerificarResponseDto })
+  async verificarNumerosPorFecha(@Query() query: CreateVerificarPorFechaDto) {
+    return this.balotoService.verificarNumerosPorFecha(query.fecha, query.numeros, query.superbalota);
   }
 }

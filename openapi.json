@@ -134,6 +134,63 @@
           "baloto"
         ]
       }
+    },
+    "/baloto/verificar-por-fecha": {
+      "get": {
+        "description": "Verifica una jugada contra el sorteo de una fecha específica",
+        "operationId": "BalotoController_verificarNumerosPorFecha",
+        "parameters": [
+          {
+            "name": "fecha",
+            "required": true,
+            "in": "query",
+            "description": "Fecha del sorteo (formato YYYY-MM-DD)",
+            "schema": {
+              "example": "2026-09-05",
+              "type": "string"
+            }
+          },
+          {
+            "name": "numeros",
+            "required": true,
+            "in": "query",
+            "description": "Números de la jugada: separados por comas (11,12,17,5,6) o parámetro repetido 5 veces",
+            "schema": {
+              "example": "11,12,17,5,6",
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "name": "superbalota",
+            "required": true,
+            "in": "query",
+            "description": "Número superbalota (1-16)",
+            "schema": {
+              "example": 15,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado de la verificación contra el sorteo de la fecha indicada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificarResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Verificar jugada por fecha",
+        "tags": [
+          "baloto"
+        ]
+      }
     }
   },
   "info": {

@@ -135,4 +135,63 @@ export class BalotoService {
       paginacion: { paginaActual: page, totalPaginas, resultadosPorPagina: limit }
     };
   }
+
+  private parsearFechaEspanol(fechaStr: string): Date | null {
+    const meses: Record<string, number> = {
+      enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
+      julio: 6, agosto: 7, septiembre: 8, octubre: 9, noviembre: 10, diciembre: 11,
+    };
+    const match = fechaStr.match(/(\d+)\s+de\s+(\w+)\s+de\s+(\d{4})/);
+    if (!match) return null;
+    const [, dia, mes, anio] = match;
+    const mesNum = meses[mes.toLowerCase()];
+    if (mesNum === undefined) return null;
+    return new Date(parseInt(anio), mesNum, parseInt(dia));
+  }
+
+  async verificarNumerosPorFecha(fecha: string, numeros: number[], superbalota: number) {
+    const resultados = await this.obtenerUltimosResultados();
+    const fechaBuscada = new Date(fecha + 'T00:00:00');
+
+    const buscarPorFecha = (items: { fecha: string }[]) =>
+      items.find(item => {
+        const fechaItem = this.parsearFechaEspanol(item.fecha);
+        return fechaItem && fechaItem.getTime() === fechaBuscada.getTime();
+      });
+
+    const balotoSorteo = buscarPorFecha(resultados.baloto) as ResultadoBaloto | undefined;
+    const revanchaSorteo = buscarPorFecha(resultados.revancha) as ResultadoRevancha | undefined;
+
+    if (!balotoSorteo && !revanchaSorteo) {
+      throw new HttpException(
+        `No se encontró sorteo para la fecha ${fecha}`,
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const verificarSorteo = (numerosUsuario: number[], superbalotaUsuario: number, numerosGanadores: number[], superbalotaGanadora: number, tipoSorteo: string) => {
+      const aciertosNumeros = numerosUsuario.filter(n => numerosGanadores.includes(n)).length;
+      const aciertoSuperbalota = superbalotaUsuario === superbalotaGanadora;
+
+      let categoria = 'Sin premio';
+      let premio = 0;
+
+      if (aciertosNumeros === 5 && aciertoSuperbalota) { categoria = 'Premio Mayor'; premio = 1; }
+      else if (aciertosNumeros === 5) { categoria = 'Segundo Premio'; premio = 2; }
+      else if (aciertosNumeros === 4 && aciertoSuperbalota) { categoria = 'Tercer Premio'; premio = 3; }
+      else if (aciertosNumeros === 4) { categoria = 'Cuarto Premio'; premio = 4; }
+      else if (aciertosNumeros === 3 && aciertoSuperbalota) { categoria = 'Quinto Premio'; premio = 5; }
+      else if (aciertosNumeros === 3) { categoria = 'Sexto Premio'; premio = 6; }
+      else if (aciertosNumeros >= 0 && aciertoSuperbalota) { categoria = 'Reintegro'; premio = 7; }
+
+      return { tipoSorteo, ganador: premio > 0, categoria, premio, aciertos: { numeros: aciertosNumeros, superbalota: aciertoSuperbalota }, numerosGanadores, superbalotaGanadora };
+    };
+
+    return {
+      numerosUsuario: { numeros, superbalota },
+      baloto: balotoSorteo ? verificarSorteo(numeros, superbalota, balotoSorteo.numeros, balotoSorteo.superbalota, 'Baloto') : null,
+      revancha: revanchaSorteo ? verificarSorteo(numeros, superbalota, revanchaSorteo.numeros, revanchaSorteo.superbalota, 'Revancha') : null,
+      fecha
+    };
+  }
 }

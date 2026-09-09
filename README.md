@@ -205,6 +205,29 @@ Ambos formatos de `numeros` son válidos. / Both `numeros` formats are valid:
 
 > 💡 `premio` es un identificador de categoría (1–7), no un monto monetario. / `premio` is a category identifier (1–7), not a monetary amount.
 
+### `GET /baloto/verificar-por-fecha`
+
+**ES** — Verifica una jugada contra el sorteo de una fecha específica.
+**EN** — Verifies a play against the draw of a specific date.
+
+| Parámetro / Parameter | Tipo / Type | Validación / Validation | Descripción / Description |
+|---|---|---|---|
+| `fecha` | string | formato `YYYY-MM-DD` / format `YYYY-MM-DD` | Fecha del sorteo a consultar / Draw date to check |
+| `numeros` | number[] | exactamente 5 números, 1–43 / exactly 5 numbers, 1–43 | Números principales de la jugada / Main numbers of the play |
+| `superbalota` | number | 1–16 | Número superbalota de la jugada / Superball number of the play |
+
+**Ejemplo / Example:**
+
+```
+GET /baloto/verificar-por-fecha?fecha=2026-09-05&numeros=11,12,17,5,6&superbalota=15
+```
+
+**Respuesta 200 / Response 200:** (misma estructura que `/baloto/verificar`)
+
+**Errores / Errors:**
+- `400 Bad Request` — parámetros inválidos / invalid parameters
+- `404 Not Found` — no existe sorteo para la fecha indicada / no draw found for the given date
+
 ### `GET /`
 
 **ES** — Endpoint raíz de prueba (scaffold de NestJS). Devuelve `Hello World!`.
@@ -212,9 +235,9 @@ Ambos formatos de `numeros` son válidos. / Both `numeros` formats are valid:
 
 ### Errores · Errors
 
-**ES** — Todos los endpoints de `/baloto/*` devuelven `500 Internal Server Error` si el scraping falla (por ejemplo, si no se encuentra el navegador o baloto.com no responde). Los parámetros inválidos en `/baloto/historico` y `/baloto/verificar` devuelven `400 Bad Request` gracias al `ValidationPipe` global.
+**ES** — Todos los endpoints de `/baloto/*` devuelven `500 Internal Server Error` si el scraping falla (por ejemplo, si no se encuentra el navegador o baloto.com no responde). Los parámetros inválidos en `/baloto/historico`, `/baloto/verificar` y `/baloto/verificar-por-fecha` devuelven `400 Bad Request` gracias al `ValidationPipe` global. El endpoint `/baloto/verificar-por-fecha` devuelve `404 Not Found` si no hay sorteo para la fecha indicada.
 
-**EN** — All `/baloto/*` endpoints return `500 Internal Server Error` if scraping fails (e.g. browser not found or baloto.com not responding). Invalid parameters on `/baloto/historico` and `/baloto/verificar` return `400 Bad Request` thanks to the global `ValidationPipe`.
+**EN** — All `/baloto/*` endpoints return `500 Internal Server Error` if scraping fails (e.g. browser not found or baloto.com not responding). Invalid parameters on `/baloto/historico`, `/baloto/verificar` and `/baloto/verificar-por-fecha` return `400 Bad Request` thanks to the global `ValidationPipe`. The `/baloto/verificar-por-fecha` endpoint returns `404 Not Found` if no draw is found for the given date.
 
 ## Tareas programadas · Scheduled tasks
 
