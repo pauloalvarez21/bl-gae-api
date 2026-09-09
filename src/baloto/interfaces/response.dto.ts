@@ -74,7 +74,7 @@ export class VerificacionSorteoDto {
   })
   categoria: string;
 
-  @ApiProperty({ description: 'Nivel de premio (1-7, 0 = sin premio)', example: 5 })
+  @ApiProperty({ description: 'Identificador de categoría (1-7, 0 = sin premio). No es un monto monetario', example: 5 })
   premio: number;
 
   @ApiProperty({ description: 'Detalle de aciertos', type: () => AciertosDto })

@@ -344,7 +344,7 @@
           },
           "premio": {
             "type": "number",
-            "description": "Nivel de premio (1-7, 0 = sin premio)",
+            "description": "Identificador de categoría (1-7, 0 = sin premio). No es un monto monetario",
             "example": 5
           },
           "aciertos": {

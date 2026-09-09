@@ -203,6 +203,8 @@ Ambos formatos de `numeros` son válidos. / Both `numeros` formats are valid:
 | 0–2 | ✓ | Reintegro / Reimbursement | 7 |
 | cualquier otro caso / any other case | — | Sin premio / No prize | 0 |
 
+> 💡 `premio` es un identificador de categoría (1–7), no un monto monetario. / `premio` is a category identifier (1–7), not a monetary amount.
+
 ### `GET /`
 
 **ES** — Endpoint raíz de prueba (scaffold de NestJS). Devuelve `Hello World!`.
