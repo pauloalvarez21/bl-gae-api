@@ -31,26 +31,12 @@ export class UltimoResultadoResponseDto {
   revancha: ResultadoSorteoDto | null;
 }
 
-export class PaginacionDto {
-  @ApiProperty({ description: 'Página actual', example: 1 })
-  paginaActual: number;
-
-  @ApiProperty({ description: 'Total de páginas disponibles', example: 125 })
-  totalPaginas: number;
-
-  @ApiProperty({ description: 'Resultados por página solicitados', example: 10 })
-  resultadosPorPagina: number;
-}
-
 export class HistoricoResponseDto {
-  @ApiProperty({ description: 'Resultados de Baloto de la página', type: [ResultadoSorteoDto] })
+  @ApiProperty({ description: 'Últimos resultados de Baloto', type: [ResultadoSorteoDto] })
   baloto: ResultadoSorteoDto[];
 
-  @ApiProperty({ description: 'Resultados de Revancha de la página', type: [ResultadoSorteoDto] })
+  @ApiProperty({ description: 'Últimos resultados de Revancha', type: [ResultadoSorteoDto] })
   revancha: ResultadoSorteoDto[];
-
-  @ApiProperty({ description: 'Información de paginación', type: () => PaginacionDto })
-  paginacion: PaginacionDto;
 }
 
 export class AciertosDto {

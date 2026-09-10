@@ -3,8 +3,6 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { BalotoService } from './baloto.service';
 import { CreateVerificarDto } from './verificar/dto/create-verificar.dto';
-import { CreateVerificarPorFechaDto } from './verificar/dto/create-verificar-por-fecha.dto';
-import { CreateHistoricoDto } from './historico/dto/create-historico.dto';
 import { UltimoResultadoResponseDto, HistoricoResponseDto, VerificarResponseDto } from './interfaces/response.dto';
 
 @ApiTags('baloto')
@@ -20,12 +18,10 @@ export class BalotoController {
   }
 
   @Get('historico')
-  @ApiOperation({ summary: 'Histórico de resultados', description: 'Devuelve resultados históricos paginados de Baloto y Revancha' })
-  @ApiQuery({ name: 'page', required: false, description: 'Página del histórico a consultar (1-125)', example: 1 })
-  @ApiQuery({ name: 'limit', required: false, description: 'Cantidad de resultados por página (1-50)', example: 10 })
-  @ApiOkResponse({ description: 'Resultados históricos paginados', type: HistoricoResponseDto })
-  async obtenerHistorico(@Query() query: CreateHistoricoDto) {
-    return this.balotoService.obtenerHistorico(query.page, query.limit);
+  @ApiOperation({ summary: 'Histórico de resultados', description: 'Devuelve los últimos resultados de Baloto y Revancha' })
+  @ApiOkResponse({ description: 'Últimos resultados de Baloto y Revancha', type: HistoricoResponseDto })
+  async obtenerHistorico() {
+    return this.balotoService.obtenerHistorico();
   }
 
   @Get('verificar')
@@ -40,20 +36,5 @@ export class BalotoController {
   @ApiOkResponse({ description: 'Resultado de la verificación contra Baloto y Revancha', type: VerificarResponseDto })
   async verificarNumeros(@Query() query: CreateVerificarDto) {
     return this.balotoService.verificarNumeros(query.numeros, query.superbalota);
-  }
-
-  @Get('verificar-por-fecha')
-  @ApiOperation({ summary: 'Verificar jugada por fecha', description: 'Verifica una jugada contra el sorteo de una fecha específica' })
-  @ApiQuery({ name: 'fecha', required: true, description: 'Fecha del sorteo (formato YYYY-MM-DD)', example: '2026-09-05' })
-  @ApiQuery({
-    name: 'numeros',
-    required: true,
-    description: 'Números de la jugada: separados por comas (11,12,17,5,6) o parámetro repetido 5 veces',
-    example: '11,12,17,5,6',
-  })
-  @ApiQuery({ name: 'superbalota', required: true, description: 'Número superbalota (1-16)', example: 15 })
-  @ApiOkResponse({ description: 'Resultado de la verificación contra el sorteo de la fecha indicada', type: VerificarResponseDto })
-  async verificarNumerosPorFecha(@Query() query: CreateVerificarPorFechaDto) {
-    return this.balotoService.verificarNumerosPorFecha(query.fecha, query.numeros, query.superbalota);
   }
 }

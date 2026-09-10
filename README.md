@@ -9,17 +9,17 @@
 **ES**
 
 - 📊 **Último resultado**: consulta el sorteo más reciente de Baloto y Revancha.
-- 📜 **Histórico paginado**: navega por resultados históricos con paginación real (parámetros `page` y `limit`).
+- 📜 **Histórico**: devuelve los últimos resultados disponibles de Baloto y Revancha.
 - ✅ **Verificación de jugadas**: compara tus números contra el último sorteo y determina la categoría de premio.
-- ⚡ **Caché en memoria** (24 h para el histórico, 1 h global) para reducir el scraping.
+- ⚡ **Caché en memoria** (1 h) para reducir el scraping.
 - 🕐 **Tareas programadas**: actualización automática los días de sorteo (miércoles, viernes y sábado) y verificación horaria del caché.
 
 **EN**
 
 - 📊 **Latest result**: fetch the most recent Baloto and Revancha draw.
-- 📜 **Paginated history**: browse historical results with real pagination (`page` and `limit` parameters).
+- 📜 **History**: returns the latest available Baloto and Revancha results.
 - ✅ **Number verification**: compare your numbers against the latest draw and determine the prize category.
-- ⚡ **In-memory cache** (24 h for history, 1 h global) to reduce scraping.
+- ⚡ **In-memory cache** (1 h) to reduce scraping.
 - 🕐 **Scheduled tasks**: automatic updates on draw days (Wednesday, Friday and Saturday) and hourly cache checks.
 
 ## Requisitos · Requirements
@@ -104,15 +104,10 @@ Base URL / URL base: `http://localhost:3000`
 
 Si no hay resultados, el campo correspondiente llega como `null`. / If there are no results, the corresponding field is `null`.
 
-### `GET /baloto/historico?page=1&limit=10`
+### `GET /baloto/historico`
 
-**ES** — Devuelve resultados históricos paginados.
-**EN** — Returns paginated historical results.
-
-| Parámetro / Parameter | Tipo / Type | Default | Validación / Validation | Descripción / Description |
-|---|---|---|---|---|
-| `page` | number | `1` | 1–125 | Página del histórico a consultar / History page to fetch |
-| `limit` | number | `10` | 1–50 | Cantidad de resultados por página / Results per page |
+**ES** — Devuelve los últimos resultados de Baloto y Revancha.
+**EN** — Returns the latest Baloto and Revancha results.
 
 **Respuesta 200 / Response 200:**
 
@@ -123,16 +118,11 @@ Si no hay resultados, el campo correspondiente llega como `null`. / If there are
   ],
   "revancha": [
     { "sorteo": 2, "fecha": "5 de septiembre de 2026", "numeros": [3, 9, 22, 27, 40], "superbalota": 7 }
-  ],
-  "paginacion": {
-    "paginaActual": 1,
-    "totalPaginas": 25,
-    "resultadosPorPagina": 10
-  }
+  ]
 }
 ```
 
-> 💡 Los datos se cachean durante 24 horas. La paginación aplica sobre todos los resultados disponibles del scraping. / Data is cached for 24 hours. Pagination applies over all available scraped results.
+> 💡 Los datos se cachean durante 1 hora. / Data is cached for 1 hour.
 
 ### `GET /baloto/verificar`
 
@@ -205,29 +195,6 @@ Ambos formatos de `numeros` son válidos. / Both `numeros` formats are valid:
 
 > 💡 `premio` es un identificador de categoría (1–7), no un monto monetario. / `premio` is a category identifier (1–7), not a monetary amount.
 
-### `GET /baloto/verificar-por-fecha`
-
-**ES** — Verifica una jugada contra el sorteo de una fecha específica.
-**EN** — Verifies a play against the draw of a specific date.
-
-| Parámetro / Parameter | Tipo / Type | Validación / Validation | Descripción / Description |
-|---|---|---|---|
-| `fecha` | string | formato `YYYY-MM-DD` / format `YYYY-MM-DD` | Fecha del sorteo a consultar / Draw date to check |
-| `numeros` | number[] | exactamente 5 números, 1–43 / exactly 5 numbers, 1–43 | Números principales de la jugada / Main numbers of the play |
-| `superbalota` | number | 1–16 | Número superbalota de la jugada / Superball number of the play |
-
-**Ejemplo / Example:**
-
-```
-GET /baloto/verificar-por-fecha?fecha=2026-09-05&numeros=11,12,17,5,6&superbalota=15
-```
-
-**Respuesta 200 / Response 200:** (misma estructura que `/baloto/verificar`)
-
-**Errores / Errors:**
-- `400 Bad Request` — parámetros inválidos / invalid parameters
-- `404 Not Found` — no existe sorteo para la fecha indicada / no draw found for the given date
-
 ### `GET /`
 
 **ES** — Endpoint raíz de prueba (scaffold de NestJS). Devuelve `Hello World!`.
@@ -235,9 +202,9 @@ GET /baloto/verificar-por-fecha?fecha=2026-09-05&numeros=11,12,17,5,6&superbalot
 
 ### Errores · Errors
 
-**ES** — Todos los endpoints de `/baloto/*` devuelven `500 Internal Server Error` si el scraping falla (por ejemplo, si no se encuentra el navegador o baloto.com no responde). Los parámetros inválidos en `/baloto/historico`, `/baloto/verificar` y `/baloto/verificar-por-fecha` devuelven `400 Bad Request` gracias al `ValidationPipe` global. El endpoint `/baloto/verificar-por-fecha` devuelve `404 Not Found` si no hay sorteo para la fecha indicada.
+**ES** — Todos los endpoints de `/baloto/*` devuelven `500 Internal Server Error` si el scraping falla (por ejemplo, si no se encuentra el navegador o baloto.com no responde). Los parámetros inválidos en `/baloto/verificar` devuelven `400 Bad Request` gracias al `ValidationPipe` global.
 
-**EN** — All `/baloto/*` endpoints return `500 Internal Server Error` if scraping fails (e.g. browser not found or baloto.com not responding). Invalid parameters on `/baloto/historico`, `/baloto/verificar` and `/baloto/verificar-por-fecha` return `400 Bad Request` thanks to the global `ValidationPipe`. The `/baloto/verificar-por-fecha` endpoint returns `404 Not Found` if no draw is found for the given date.
+**EN** — All `/baloto/*` endpoints return `500 Internal Server Error` if scraping fails (e.g. browser not found or baloto.com not responding). Invalid parameters on `/baloto/verificar` return `400 Bad Request` thanks to the global `ValidationPipe`.
 
 ## Tareas programadas · Scheduled tasks
 
@@ -292,9 +259,8 @@ src/
 └── baloto/
     ├── baloto.module.ts       # Módulo Baloto / Baloto module
     ├── baloto.controller.ts   # Endpoints /baloto/*
-    ├── baloto.service.ts      # Scraping, caché, verificación e histórico / Scraping, cache, verification & history
+    ├── baloto.service.ts      # Scraping, caché y verificación / Scraping, cache & verification
     ├── baloto-tasks/          # Tareas programadas (@nestjs/schedule) / Scheduled tasks (@nestjs/schedule)
     ├── interfaces/            # Tipos ResultadoBaloto / ResultadoRevancha y DTOs de respuesta / Result types & response DTOs
-    ├── verificar/dto/         # Validación de la jugada (create-verificar.dto.ts) / Play validation (create-verificar.dto.ts)
-    └── historico/dto/         # Validación de paginación (create-historico.dto.ts) / Pagination validation (create-historico.dto.ts)
+    └── verificar/dto/         # Validación de la jugada (create-verificar.dto.ts) / Play validation (create-verificar.dto.ts)
 ```

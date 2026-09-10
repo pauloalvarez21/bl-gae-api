@@ -40,39 +40,12 @@
     },
     "/baloto/historico": {
       "get": {
-        "description": "Devuelve resultados históricos paginados de Baloto y Revancha",
+        "description": "Devuelve los últimos resultados de Baloto y Revancha",
         "operationId": "BalotoController_obtenerHistorico",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "Página del histórico a consultar (1-125)",
-            "schema": {
-              "minimum": 1,
-              "maximum": 125,
-              "default": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "description": "Cantidad de resultados por página (1-50)",
-            "schema": {
-              "minimum": 1,
-              "maximum": 50,
-              "default": 10,
-              "example": 10,
-              "type": "number"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
-            "description": "Resultados históricos paginados",
+            "description": "Últimos resultados de Baloto y Revancha",
             "content": {
               "application/json": {
                 "schema": {
@@ -134,63 +107,6 @@
           "baloto"
         ]
       }
-    },
-    "/baloto/verificar-por-fecha": {
-      "get": {
-        "description": "Verifica una jugada contra el sorteo de una fecha específica",
-        "operationId": "BalotoController_verificarNumerosPorFecha",
-        "parameters": [
-          {
-            "name": "fecha",
-            "required": true,
-            "in": "query",
-            "description": "Fecha del sorteo (formato YYYY-MM-DD)",
-            "schema": {
-              "example": "2026-09-05",
-              "type": "string"
-            }
-          },
-          {
-            "name": "numeros",
-            "required": true,
-            "in": "query",
-            "description": "Números de la jugada: separados por comas (11,12,17,5,6) o parámetro repetido 5 veces",
-            "schema": {
-              "example": "11,12,17,5,6",
-              "type": "array",
-              "items": {
-                "type": "number"
-              }
-            }
-          },
-          {
-            "name": "superbalota",
-            "required": true,
-            "in": "query",
-            "description": "Número superbalota (1-16)",
-            "schema": {
-              "example": 15,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Resultado de la verificación contra el sorteo de la fecha indicada",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VerificarResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Verificar jugada por fecha",
-        "tags": [
-          "baloto"
-        ]
-      }
     }
   },
   "info": {
@@ -202,7 +118,7 @@
   "tags": [
     {
       "name": "baloto",
-      "description": "Resultados, histórico y verificación de jugadas de Baloto"
+      "description": "Resultados y verificación de jugadas de Baloto"
     }
   ],
   "servers": [],
@@ -277,61 +193,27 @@
           "revancha"
         ]
       },
-      "PaginacionDto": {
-        "type": "object",
-        "properties": {
-          "paginaActual": {
-            "type": "number",
-            "description": "Página actual",
-            "example": 1
-          },
-          "totalPaginas": {
-            "type": "number",
-            "description": "Total de páginas disponibles",
-            "example": 125
-          },
-          "resultadosPorPagina": {
-            "type": "number",
-            "description": "Resultados por página solicitados",
-            "example": 10
-          }
-        },
-        "required": [
-          "paginaActual",
-          "totalPaginas",
-          "resultadosPorPagina"
-        ]
-      },
       "HistoricoResponseDto": {
         "type": "object",
         "properties": {
           "baloto": {
-            "description": "Resultados de Baloto de la página",
+            "description": "Últimos resultados de Baloto",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ResultadoSorteoDto"
             }
           },
           "revancha": {
-            "description": "Resultados de Revancha de la página",
+            "description": "Últimos resultados de Revancha",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ResultadoSorteoDto"
             }
-          },
-          "paginacion": {
-            "description": "Información de paginación",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PaginacionDto"
-              }
-            ]
           }
         },
         "required": [
           "baloto",
-          "revancha",
-          "paginacion"
+          "revancha"
         ]
       },
       "NumerosUsuarioDto": {

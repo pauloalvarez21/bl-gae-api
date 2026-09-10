@@ -13,7 +13,7 @@ async function generateOpenApi() {
     .setTitle('Bl-GAE API')
     .setDescription('API de resultados de Baloto y Revancha (Colombia)')
     .setVersion('1.0')
-    .addTag('baloto', 'Resultados, histórico y verificación de jugadas de Baloto')
+    .addTag('baloto', 'Resultados y verificación de jugadas de Baloto')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
